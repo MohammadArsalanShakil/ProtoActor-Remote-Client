@@ -96,7 +96,10 @@ namespace ProtoActor_Remote_Client
                             case Connect connect:
                                 break;
                             case SayResponse sayResponse:
-                                Console.WriteLine($"{sayResponse.UserName} {sayResponse.Message}");
+                                Dispatcher.UIThread.InvokeAsync(new Action(() =>
+                                {
+                                    window.FindControl<TextBox>("tb_request").Text = $"{sayResponse.UserName} {sayResponse.Message}";
+                                }));
                                 break;
                             default:
                                 break;
