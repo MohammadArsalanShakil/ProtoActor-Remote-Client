@@ -17,6 +17,8 @@ namespace ProtoActor_Remote_Client
         private static RootContext context;
         //private static PID server;
         public static Window window;
+        private System.Timers.Timer timer;
+        private PID ClientPID = null;
 
         public MainWindow()
         {
@@ -24,11 +26,13 @@ namespace ProtoActor_Remote_Client
             InitializeComponent();
             InitializeActorSystem();
             SpawnClient();
+            InitializeTimer();
         }
 
         ~MainWindow()
         {
             context.System.Remote().ShutdownAsync().GetAwaiter().GetResult();
+            context.System.ShutdownAsync().GetAwaiter().GetResult();
         }
 
         //private static void ObtainServerPid() =>
@@ -75,10 +79,10 @@ namespace ProtoActor_Remote_Client
         //    )
         //);
 
-        private static void SpawnClient()
+        private void SpawnClient()
         {
             // Data from Server
-            PID client = context.Spawn(
+            ClientPID = context.Spawn(
                 Props.FromFunc(
                     ctx =>
                     {
@@ -109,17 +113,27 @@ namespace ProtoActor_Remote_Client
                     }
                 )
             );
+        }
 
-            new PeriodicTask().Run(() =>
+        private void InitializeTimer()
+        {
+            timer = new System.Timers.Timer(2000);
+            timer.Elapsed += Timer_Elapsed;
+            timer.Start();
+        }
+
+        private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (ClientPID != null)
             {
                 context.Send(
                     PID.FromAddress($"{Globals.serverIP}:{Globals.serverPort}", $"{Globals.serverActorName}"),
                     new Connect
                     {
-                        Sender = client
+                        Sender = ClientPID
                     }
                 );
-            }, TimeSpan.FromMilliseconds(2000));
+            }
         }
     }
 }
