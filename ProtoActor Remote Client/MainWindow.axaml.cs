@@ -7,6 +7,7 @@ using Proto.Remote;
 using Proto.Remote.GrpcNet;
 using ProtoActor_Remote_Client.Common;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using static Proto.Remote.GrpcNet.GrpcNetRemoteConfig;
 
@@ -100,6 +101,7 @@ namespace ProtoActor_Remote_Client
                             case Connect connect:
                                 break;
                             case SayResponse sayResponse:
+                                writeToCSV(sayResponse);
                                 Dispatcher.UIThread.InvokeAsync(new Action(() =>
                                 {
                                     window.FindControl<TextBox>("tb_request").Text = $"{sayResponse.UserName} {sayResponse.Message}";
@@ -134,6 +136,11 @@ namespace ProtoActor_Remote_Client
                     }
                 );
             }
+        }
+
+        private static void writeToCSV(SayResponse SayResponse)
+        {
+            File.WriteAllText(@".//Response.csv", String.Join(Environment.NewLine, (DateTimeOffset.Now.ToLocalTime() + "," + SayResponse.UserName + "," + SayResponse.Message)));
         }
     }
 }
