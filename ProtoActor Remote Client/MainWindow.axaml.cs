@@ -58,28 +58,6 @@ namespace ProtoActor_Remote_Client
             context = remotesystem.Root;
         }
 
-        //private static void SpawnClient() =>
-        //client = context.Spawn(
-        //    Props.FromFunc(
-        //        ctx => {
-        //            switch (ctx.Message)
-        //            {
-        //                case Connected connected:
-        //                    Console.WriteLine(connected.Message);
-        //                    break;
-        //                case SayResponse sayResponse:
-        //                    Console.WriteLine($"{sayResponse.UserName} {sayResponse.Message}");
-        //                    break;
-        //                case NickResponse nickResponse:
-        //                    Console.WriteLine($"{nickResponse.OldUserName} is now {nickResponse.NewUserName}");
-        //                    break;
-        //            }
-
-        //            return Task.CompletedTask;
-        //        }
-        //    )
-        //);
-
         private void SpawnClient()
         {
             // Data from Server
